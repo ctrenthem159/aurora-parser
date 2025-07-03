@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# VSCode settings
+.vscode/
+.code-workspace
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+.ENV/
+
+# Environment variables
+.env
+*.env
+
+# Testing artifacts
+.coverage
+htmlcov/
+.cache/
+.pytest_cache/
+
+# SQLite databases
+*.db
+!tests/sample.db  # Allow committed sample database
+
+# Logs
+*.log
+
+# MacOS / Windows / Linux system files
+.DS_Store
+Thumbs.db
+
+# Installer / packaging
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebooks (if any in future)
+.ipynb_checkpoints/
+
+# MyPy / coverage / lint
+.mypy_cache/
+coverage.xml
+
+# VSCode Python language server caches
+.pylance/
+
+# Test reports
+test-results/
+
+# Temp files
+*.tmp
+*.bak
+*.swp
