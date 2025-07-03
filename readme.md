@@ -57,25 +57,11 @@ Currently, tests cover the db functions only but the rest is in progress.
 - [ ] Conversion to a live viewer in addition to exporting logs
 - [ ] Viewer for other database areas that users find relevant. (Unless Steve says otherwise, this tool will not allow modifying the database)
 
-## 🤖 AI Assistance Disclosure
+## 📄 Legal
 
-Portions of this project's source code were written with the assistance of ChatGPT, a large language model developed by OpenAI.
+PolyForm Noncommercial (full license available in [[LICENSE]])
 
-ChatGPT has been used as a coding assistant to help:
-
-- Refactor and structure Python code
-- Write test cases using pytest, pytest-mock, and pytest-cov
-- Implement logging, error handling, and CLI parsing
-- Explain tools, libraries, and testing concepts
-
-All design decisions, feature definitions, and project goals were created independently.
-AI assistance was not used to generate new features or original ideas, but to improve code clarity, maintainability, and development speed.
-
-All code has been reviewed, validated,, tested, and usually modified by a human before being committed.
-
-## 📄 License
-
-PolyForm Noncommercial (full license available in LICENSE)
+AI Usage Disclosure is located at [[DISCLOSURE.md]]
 
 ## 🧠 Credits
 
