@@ -37,6 +37,7 @@ def get_races(engine, game_id):
 def filter_events(engine, df, gui=True, raceID=None):
     from prompt_toolkit.shortcuts import radiolist_dialog
 
+    #TODO Tests need refactoring. Need to add GUI tests.
     if not gui:
         selection_game = radiolist_dialog(
             title="Select a Game",

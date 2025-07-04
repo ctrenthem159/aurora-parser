@@ -5,15 +5,24 @@ from PyQt6.QtWidgets import (
     QFileDialog, QLabel, QComboBox, QTableView, QListWidget,
     QListWidgetItem
 )
+from PyQt6.QtCore import QAbstractTableModel, Qt
 from app import db, export
 import logging
 
+#TODO Add documentation and unit tests
+#TODO Clean up imports, remove unused ones
+#TODO remove gui.mockup once these are done.
+
 logger = logging.getLogger(__name__)
+
+#TODO - Add DataFrameModel class (see ChatGPT)
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aurora Parser GUI")
+        #TODO Find a suitable minimum size
+        #TODO add more flair to the UI
         self.setMinimumSize(800,600)
 
         # Central widget
@@ -62,6 +71,7 @@ class MainWindow(QMainWindow):
         main_layout.addLayout(filter_layout)
 
         # Evvents table display
+        #TODO Change to QTableView
         self.events_table = QListWidget()
         self.events_table.setMinimumHeight(400)
         self.events_table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
@@ -123,6 +133,7 @@ class MainWindow(QMainWindow):
         self.race_combo.setEnabled(True)
         self.load_button.setEnabled(True)
     
+    #TODO Refactor this to use a DataFrameModel for QTableView
     def load_events(self):
         selected_race = self.race_combo.currentText()
         raceID = self.race_map.get(selected_race)
@@ -141,6 +152,7 @@ class MainWindow(QMainWindow):
     
     def populate_events_table(self, df):
         self.events_table.clear()
+        #FIXME review this code, I don't understand what for _, row is doing
         for _, row in df.iterrows():
             summary = row.get('MessageText', str(row.to_dict()))
             item = QListWidgetItem(summary)
@@ -150,6 +162,7 @@ class MainWindow(QMainWindow):
     
     def show_export_dialog(self):
         filters = "CSV Files (*.csv);;JSON Files (*.json);;Excel Files (*.xlsx);;Text Files (*.txt);;HTML Files (*.html)"
+        #FIXME Analyze this code, figure out how getSaveFileName works
         file_path, selected_filter = QFileDialog.getSaveFileName(
             self,
             "Export Events",
@@ -175,6 +188,7 @@ class MainWindow(QMainWindow):
             self.status.setText("Unsupported file type.")
             return
         
+        #TODO validate excel, txt, and json. csv and html work fine.
         try:
             export.export_data(self.events_output[['IncrementID', 'MessageText']], file_path, format=fmt)
             self.status.setText(f"Exported to {file_path}")
