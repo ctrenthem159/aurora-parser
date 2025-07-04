@@ -20,29 +20,33 @@ def get_events(engine):
 
     return df
 
-
-def filter_events(engine, df):
-    from prompt_toolkit.shortcuts import radiolist_dialog
+def get_saves(engine):
     query_game = "SELECT GameID, GameName FROM FCT_Game"
     games_df = pd.read_sql_query(query_game, engine)
     game = games_df[["GameID", "GameName"]].values.tolist()
     logger.debug(f'List of available games: {game}')
+    return game
+
+def get_races(engine, game_id):
+    query_race = f"SELECT RaceID, RaceName FROM FCT_Race WHERE GameID = {game_id}"
+    races_df = pd.read_sql_query(query_race, engine)
+    races = races_df[["RaceID", "RaceName"]].values.tolist()
+    logger.debug(f'List of available races: {races}')
+    return races
+
+def filter_events(engine, df):
+    from prompt_toolkit.shortcuts import radiolist_dialog
 
     selection_game = radiolist_dialog(
         title="Select a Game",
         text="Choose the game your race is in:",
-        values=game
+        values=get_saves(engine)
     ).run()
-
-    query_race = f"SELECT RaceID, RaceName FROM FCT_Race WHERE GameID = {selection_game}"
-    races_df = pd.read_sql_query(query_race, engine)
-    races = races_df[["RaceID", "RaceName"]].values.tolist()
-    logger.debug(f'List of available races: {races}')
 
     selection_race = radiolist_dialog(
         title="Select a Race",
         text="Choose which race you want to view events for:",
-        values=races
+        values=get_races(engine, selection_game)
     ).run()
 
     filtered_df = df[df['RaceID'] == selection_race]

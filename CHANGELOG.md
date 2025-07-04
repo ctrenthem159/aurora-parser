@@ -10,6 +10,16 @@ This changelog adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ### Added
 
+- GUI
+
+### Changed
+
+- Backend database logic separated out for GUI compatability. Unit tests aren't ready for the changes.
+
+## [0.6.0] - 2025-07-03
+
+### Added
+
 - Additional unit testing for other functions
 
 ## [0.5.0] - 2025-07-03
