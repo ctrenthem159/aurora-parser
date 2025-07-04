@@ -26,6 +26,6 @@ def main():
         return
 
     df = db.get_events(engine)
-    filtered_df = db.filter_events(engine, df)
+    filtered_df = db.filter_events(engine, df, gui=False)
     export.export_data(filtered_df, filename=file, format=args.format)
     return 0

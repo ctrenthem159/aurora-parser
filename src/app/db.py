@@ -34,20 +34,24 @@ def get_races(engine, game_id):
     logger.debug(f'List of available races: {races}')
     return races
 
-def filter_events(engine, df):
+def filter_events(engine, df, gui=True, raceID=None):
     from prompt_toolkit.shortcuts import radiolist_dialog
 
-    selection_game = radiolist_dialog(
-        title="Select a Game",
-        text="Choose the game your race is in:",
-        values=get_saves(engine)
-    ).run()
+    if not gui:
+        selection_game = radiolist_dialog(
+            title="Select a Game",
+            text="Choose the game your race is in:",
+            values=get_saves(engine)
+        ).run()
 
-    selection_race = radiolist_dialog(
-        title="Select a Race",
-        text="Choose which race you want to view events for:",
-        values=get_races(engine, selection_game)
-    ).run()
+        selection_race = radiolist_dialog(
+            title="Select a Race",
+            text="Choose which race you want to view events for:",
+            values=get_races(engine, selection_game)
+        ).run()
+    else:
+        if raceID is not None:
+            selection_race = raceID
 
     filtered_df = df[df['RaceID'] == selection_race]
     logger.debug(filtered_df.head())
