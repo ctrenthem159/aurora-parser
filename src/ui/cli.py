@@ -1,6 +1,7 @@
 import argparse
 import logging
 import app.db as db, app.export as export, app.logger as logger
+from prompt_toolkit.shortcuts import radiolist_dialog
 
 def main():
     # Parse command line arguments
@@ -26,6 +27,20 @@ def main():
         return
 
     df = db.get_events(engine)
-    filtered_df = db.filter_events(engine, df, gui=False)
+
+
+    selection_game = radiolist_dialog(
+        title="Select a Game",
+        text="Choose the game your race is in:",
+        values=db.get_saves(engine)
+    ).run()
+
+    selection_race = radiolist_dialog(
+        title="Select a Race",
+        text="Choose which race you want to view events for:",
+        values=db.get_races(engine, selection_game)
+    ).run()
+
+    filtered_df = db.filter_events(engine, df, selection_race)
     export.export_data(filtered_df, filename=file, format=args.format)
     return 0

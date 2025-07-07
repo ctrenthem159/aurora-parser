@@ -35,6 +35,26 @@ def test_get_events(sample_engine, mock_logger_db):
     except AssertionError as e:
         raise AssertionError("Logged DataFrame head does not match expected DataFrame head") from e
     
+def test_get_saves(sample_engine, mock_logger_db):
+    df = db.get_saves(sample_engine)
+    #TODO Test that the list of games from the database matches the expected list
+    assert df == [[115, 'Galactic Empire']]
+    assert len(df) == 1
+
+    # Check that the debug log was called with the correct output list
+    mock_logger_db.debug.assert_called_once()
+    assert mock_logger_db.debug.call_args[0][0] == "List of available games: [[115, 'Galactic Empire']]"
+
+def test_get_races(sample_engine, mock_logger_db):
+    df = db.get_races(sample_engine, 115)
+    #TODO Test that the list of games from the database matches the expected list
+    assert df == [[588, 'Terran'], [589, 'Aaanthor'], [590, 'Eldar'], [591, 'Precusors'], [592, 'Invaders'], [593, 'Rhoeng'], [594, 'Alris Corvin'], [595, 'Odzani']]
+    assert len(df) == 8
+
+    # Check that the debug log was called with the correct output list
+    mock_logger_db.debug.assert_called_once()
+    assert mock_logger_db.debug.call_args[0][0] == "List of available races: [[588, 'Terran'], [589, 'Aaanthor'], [590, 'Eldar'], [591, 'Precusors'], [592, 'Invaders'], [593, 'Rhoeng'], [594, 'Alris Corvin'], [595, 'Odzani']]"
+
 def test_filter_events(sample_engine, mock_logger_db, mocker):
     df = pd.read_sql_query("SELECT * FROM FCT_GameLog", sample_engine)
 
@@ -42,7 +62,7 @@ def test_filter_events(sample_engine, mock_logger_db, mocker):
     mock_dialog =  mocker.patch("prompt_toolkit.shortcuts.radiolist_dialog")
     mock_dialog.return_value.run.side_effect = [115, 588]
 
-    filtered_df = db.filter_events(sample_engine, df)
+    filtered_df = db.filter_events(sample_engine, df, gui=False)
 
     # Validate the filtered DataFrame contains only the events being targetted
     assert not filtered_df.empty, "Expected filter_events() to return a non-empty DataFrame"

@@ -31,30 +31,14 @@ def get_races(engine, game_id):
     query_race = f"SELECT RaceID, RaceName FROM FCT_Race WHERE GameID = {game_id}"
     races_df = pd.read_sql_query(query_race, engine)
     races = races_df[["RaceID", "RaceName"]].values.tolist()
+    print(races)
     logger.debug(f'List of available races: {races}')
     return races
 
-def filter_events(engine, df, gui=True, raceID=None):
+def filter_events(engine, df, raceID):
     from prompt_toolkit.shortcuts import radiolist_dialog
 
-    #TODO Tests need refactoring. Need to add GUI tests.
-    if not gui:
-        selection_game = radiolist_dialog(
-            title="Select a Game",
-            text="Choose the game your race is in:",
-            values=get_saves(engine)
-        ).run()
-
-        selection_race = radiolist_dialog(
-            title="Select a Race",
-            text="Choose which race you want to view events for:",
-            values=get_races(engine, selection_game)
-        ).run()
-    else:
-        if raceID is not None:
-            selection_race = raceID
-
-    filtered_df = df[df['RaceID'] == selection_race]
+    filtered_df = df[df['RaceID'] == raceID]
     logger.debug(filtered_df.head())
 
     return filtered_df

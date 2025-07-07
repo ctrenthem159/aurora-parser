@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
         
         try:
             events_input = db.get_events(self.engine)
-            self.events_output = db.filter_events(self.engine, events_input, gui=True, raceID=raceID)
+            self.events_output = db.filter_events(self.engine, events_input, raceID)
             self.populate_events_table(self.events_output)
             self.status.setText(f'{len(self.events_output)} events loaded')
         except Exception as e:
