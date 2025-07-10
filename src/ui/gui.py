@@ -1,10 +1,11 @@
-import sys
+import sys, os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QAbstractItemView,
     QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
     QFileDialog, QLabel, QComboBox, QTableView
 )
 from PyQt6.QtCore import QAbstractTableModel, Qt
+from PyQt6.QtGui import QIcon
 from app import db, export
 import logging
 
@@ -12,6 +13,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# Set the window icon correctly
+if getattr(sys, 'frozen', False):
+    basedir = sys._MEIPASS
+else:
+    basedir = os.path.dirname(__file__)
+icon_path = os.path.join(basedir, 'assets', 'logo.png')
+
+# Initialize the dataframe for the event viewer module
 class QDataFrameModel(QAbstractTableModel):
     def __init__(self,data, visible_columns=None):
         super().__init__()
@@ -212,6 +221,7 @@ class MainWindow(QMainWindow):
 
 def run_gui():
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(icon_path))
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
