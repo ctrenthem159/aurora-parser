@@ -29,7 +29,7 @@ def test_main_runs_successfully(mocker):
     assert result == 0
     mock_connect.assert_called_once_with("tests/sample.db")
     mock_get.assert_called_once_with('sqlite:///tests/sample.db')
-    mock_filter.assert_called_once_with('raw_df', 588)
+    mock_filter.assert_called_once_with('sqlite:///tests/sample.db', 'raw_df', 115, 588)
     mock_export.assert_called_once_with("filtered_df", filename="test_output.json", format="json")
 
 def test_main_returns_early_on_db_failure(mocker):

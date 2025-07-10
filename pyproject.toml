@@ -20,6 +20,9 @@ pytest = "^8.0"
 pytest-cov = "^4.1"
 pytest-mock = "^3.14"
 
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

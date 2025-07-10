@@ -56,7 +56,7 @@ def test_get_races(sample_engine, mock_logger_db):
 def test_filter_events(sample_engine, mock_logger_db, mocker):
     df = pd.read_sql_query("SELECT * FROM FCT_GameLog", sample_engine)
 
-    filtered_df = db.filter_events(df, 588)
+    filtered_df = db.filter_events(sample_engine, df, 115, 588)
 
     # Validate the filtered DataFrame contains only the events being targetted
     assert not filtered_df.empty, "Expected filter_events() to return a non-empty DataFrame"

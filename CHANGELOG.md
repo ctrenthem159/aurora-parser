@@ -6,15 +6,20 @@ This changelog adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0
 
 ---
 
-## [Unreleased]
+## [0.7.0]
 
 ### Added
 
 - GUI
+- Conversion function to generate timestamps for each log entry
 
 ### Changed
 
 - Backend database logic separated out for GUI compatability. Unit tests aren't ready for the changes.
+
+### Fixed
+
+- Unit tests are working again. Coverage isn't 100%, but they work.
 
 ## [0.6.0] - 2025-07-03
 

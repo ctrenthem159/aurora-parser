@@ -4,8 +4,9 @@ A simple interactive tool to extract your empire's logs from the Aurora database
 
 ## 🚀 Features
 
-- Interactive menu to select your save and empire. (It will show you all empires, including NPRs and Precursors)
-- Export logs to csv, json, excel, human-readable text, and html
+- Interactive menu to select your race (or any race you want to view)
+- See your gamelogs directly in the app, with readable timestamps
+- Export logs to a variety of formats including csv and json
 
 ## 🛠️ Installation
 
@@ -21,17 +22,7 @@ pip install -r requirements.txt
 
 ## 📦 Usage
 
-```bash
-python [--format csv] [--log-level INFO] [--log_file output.log] src/main.py path/to/AuroraDB.db path/to/output.file
-```
-
-### Arguments
-
-- `--format`: choose the output file format. Options are csv, json, xlsx (excel spreadsheet), txt (human-readable text file), or html
-- `--log-level`: set the logging level. All standard log levels are available
-- `--log-file`: output the log to a file. Be sure to include this when opening a support ticket.
-
-All of these arguments are optional. The format defaults to a csv file and logging defaults to `INFO` and logs directly to stdout.
+At present, using the app is no different from development. A functional GUI is ready, but not easy to access yet.
 
 ## 🧪 Testing
 
@@ -45,8 +36,6 @@ coverage report
 coverage html  # view HTML report in `htmlcov/index.html
 ```
 
-Currently, tests cover the db functions only but the rest is in progress.
-
 ---
 
 ## 🔭 Roadmap
@@ -56,6 +45,12 @@ Currently, tests cover the db functions only but the rest is in progress.
 - [x] GUI interface (PyQt)
 - [x] Conversion to a live viewer in addition to exporting logs
 - [ ] Viewer for other database areas that users find relevant. (Unless Steve says otherwise, this tool will not allow modifying the database)
+- [ ] Filters to hide NPRs and Precursor races (no spoiler mode)
+- [ ] Mapping event types to textual types (Right now, event types show up as numbers, just like in the database itself)
+- [ ] Re-write the CLI to match the functionality of the GUI, and make it more suitable for testing/automation
+- [ ] Documentation
+- [ ] Return to 100% test coverage
+- [ ] Self-contained executable file (for distribution)
 
 ## 📄 Legal
 
@@ -63,6 +58,8 @@ PolyForm Noncommercial (full license available in [[LICENSE]])
 
 AI Usage Disclosure is located at [[DISCLOSURE.md]]
 
+not yet Steve-approved (but will be once it's ready!)
+
 ## 🧠 Credits
 
-Created and maintained by @ctrenthem159, not yet Steve-approved (but will be once it's ready!)
+Created and maintained by @ctrenthem159
