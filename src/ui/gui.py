@@ -142,8 +142,8 @@ class MainWindow(QMainWindow):
             return
         
         try:
-            events_input = db.get_events(self.engine)
-            self.events_output = db.filter_events(self.engine, events_input, raceID)
+            events_input = db.get_events(self.engine) #returns a df
+            self.events_output = db.filter_events(events_input, raceID)
             self.populate_events_table(self.events_output)
             self.status.setText(f'{len(self.events_output)} events loaded')
         except Exception as e:

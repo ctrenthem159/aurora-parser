@@ -28,7 +28,6 @@ def main():
 
     df = db.get_events(engine)
 
-
     selection_game = radiolist_dialog(
         title="Select a Game",
         text="Choose the game your race is in:",
@@ -41,6 +40,6 @@ def main():
         values=db.get_races(engine, selection_game)
     ).run()
 
-    filtered_df = db.filter_events(engine, df, selection_race)
+    filtered_df = db.filter_events(df, selection_race)
     export.export_data(filtered_df, filename=file, format=args.format)
     return 0

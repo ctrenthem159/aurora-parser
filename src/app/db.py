@@ -35,8 +35,7 @@ def get_races(engine, game_id):
     logger.debug(f'List of available races: {races}')
     return races
 
-def filter_events(engine, df, raceID):
-    from prompt_toolkit.shortcuts import radiolist_dialog
+def filter_events(df, raceID):
 
     filtered_df = df[df['RaceID'] == raceID]
     logger.debug(filtered_df.head())

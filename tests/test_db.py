@@ -58,20 +58,8 @@ def test_get_races(sample_engine, mock_logger_db):
 def test_filter_events(sample_engine, mock_logger_db, mocker):
     df = pd.read_sql_query("SELECT * FROM FCT_GameLog", sample_engine)
 
-    # Mock the radiolist_dialog to return a specific game
-    mock_dialog =  mocker.patch("prompt_toolkit.shortcuts.radiolist_dialog")
-    mock_dialog.return_value.run.side_effect = [115, 588]
-
-    filtered_df = db.filter_events(sample_engine, df, gui=False)
+    filtered_df = db.filter_events(df, 588)
 
     # Validate the filtered DataFrame contains only the events being targetted
     assert not filtered_df.empty, "Expected filter_events() to return a non-empty DataFrame"
     assert all(filtered_df['RaceID'] == 588), "Expected all RaceID in filtered DataFrame to match the sample RaceID (588)"
-
-    # Assert: logger.debug called at least 3 times
-    assert mock_logger_db.debug.call_count >= 3
-
-    # Validate the log messages are correct
-    debug_calls = [call.args[0] for call in mock_logger_db.debug.call_args_list]
-    assert any("List of available games" in msg for msg in debug_calls)
-    assert any("List of available races" in msg for msg in debug_calls)
