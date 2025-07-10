@@ -1,7 +1,8 @@
-import ui.gui, app.logger
+from ui import gui
+from app import logger
 
 #TODO add more documentation.
 
 if __name__ == "__main__":
-    app.logger.setup_logging()
-    ui.gui.run_gui()
+    logger.setup_logging()
+    gui.run_gui()

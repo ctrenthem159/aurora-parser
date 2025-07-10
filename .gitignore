@@ -42,6 +42,7 @@ Thumbs.db
 *.egg-info/
 dist/
 build/
+*.spec
 
 # Jupyter Notebooks (if any in future)
 .ipynb_checkpoints/

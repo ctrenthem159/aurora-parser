@@ -54,9 +54,9 @@ coverage html  # view HTML report in `htmlcov/index.html
 
 ## 📄 Legal
 
-PolyForm Noncommercial (full license available in [[LICENSE]])
+PolyForm Noncommercial
 
-AI Usage Disclosure is located at [[DISCLOSURE.md]]
+AI Usage Disclosure is located at in the disclosure document
 
 not yet Steve-approved (but will be once it's ready!)
 
