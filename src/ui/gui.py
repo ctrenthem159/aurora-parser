@@ -2,28 +2,49 @@ import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QAbstractItemView,
     QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
-    QFileDialog, QLabel, QComboBox, QTableView, QListWidget,
-    QListWidgetItem
+    QFileDialog, QLabel, QComboBox, QTableView
 )
 from PyQt6.QtCore import QAbstractTableModel, Qt
 from app import db, export
 import logging
 
 #TODO Add documentation and unit tests
-#TODO Clean up imports, remove unused ones
-#TODO remove gui.mockup once these are done.
 
 logger = logging.getLogger(__name__)
 
-#TODO - Add DataFrameModel class (see ChatGPT)
+class QDataFrameModel(QAbstractTableModel):
+    def __init__(self,data, visible_columns=None):
+        super().__init__()
+        self._data = data
+        if visible_columns is None:
+            self.visible_columns = list(data.columns)
+        else:
+            self.visible_columns = visible_columns
+    
+    def data(self, index, role):
+        if role == Qt.ItemDataRole.DisplayRole:
+            column = self.visible_columns[index.column()]
+            value = self._data.iloc[index.row()][column]
+            return str(value)
+    
+    def rowCount(self, index):
+        return self._data.shape[0]
+    
+    def columnCount(self, index):
+        return len(self.visible_columns)
+    
+    def headerData(self, section, orientation, role):
+        if role == Qt.ItemDataRole.DisplayRole:
+            if orientation == Qt.Orientation.Horizontal:
+                return str(self.visible_columns[section])
+            elif orientation == Qt.Orientation.Vertical:
+                return str(self._data.index[section])
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aurora Parser GUI")
-        #TODO Find a suitable minimum size
         #TODO add more flair to the UI
-        self.setMinimumSize(800,600)
 
         # Central widget
         main_layout = QVBoxLayout()
@@ -71,9 +92,7 @@ class MainWindow(QMainWindow):
         main_layout.addLayout(filter_layout)
 
         # Evvents table display
-        #TODO Change to QTableView
-        self.events_table = QListWidget()
-        self.events_table.setMinimumHeight(400)
+        self.events_table = QTableView()
         self.events_table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
         main_layout.addWidget(self.events_table, stretch=1)
@@ -118,11 +137,11 @@ class MainWindow(QMainWindow):
         if not selected_game:
             return
         
-        gameID = self.savegame_map.get(selected_game)
-        if not gameID:
+        self.gameID = self.savegame_map.get(selected_game)
+        if not self.gameID:
             return
         
-        result = db.get_races(self.engine, gameID)
+        result = db.get_races(self.engine, self.gameID)
         self.race_combo.clear()
         self.race_map = {}
 
@@ -133,7 +152,6 @@ class MainWindow(QMainWindow):
         self.race_combo.setEnabled(True)
         self.load_button.setEnabled(True)
     
-    #TODO Refactor this to use a DataFrameModel for QTableView
     def load_events(self):
         selected_race = self.race_combo.currentText()
         raceID = self.race_map.get(selected_race)
@@ -143,7 +161,7 @@ class MainWindow(QMainWindow):
         
         try:
             events_input = db.get_events(self.engine) #returns a df
-            self.events_output = db.filter_events(events_input, raceID)
+            self.events_output = db.filter_events(self.engine, events_input, self.gameID, raceID)
             self.populate_events_table(self.events_output)
             self.status.setText(f'{len(self.events_output)} events loaded')
         except Exception as e:
@@ -151,18 +169,14 @@ class MainWindow(QMainWindow):
             logging.exception(f'Failed to load events: {e}')
     
     def populate_events_table(self, df):
-        self.events_table.clear()
-        #FIXME review this code, I don't understand what for _, row is doing
-        for _, row in df.iterrows():
-            summary = row.get('MessageText', str(row.to_dict()))
-            item = QListWidgetItem(summary)
-            self.events_table.addItem(item)
+        self.model = QDataFrameModel(df, visible_columns=['Timestamp', 'EventType', 'MessageText'])
+        self.events_table.setModel(self.model)
+        self.events_table.resizeColumnsToContents()
         
         self.export_button.setEnabled(True)
     
     def show_export_dialog(self):
         filters = "CSV Files (*.csv);;JSON Files (*.json);;Excel Files (*.xlsx);;Text Files (*.txt);;HTML Files (*.html)"
-        #FIXME Analyze this code, figure out how getSaveFileName works
         file_path, selected_filter = QFileDialog.getSaveFileName(
             self,
             "Export Events",

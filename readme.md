@@ -52,9 +52,9 @@ Currently, tests cover the db functions only but the rest is in progress.
 ## 🔭 Roadmap
 
 - [x] Multi-format export
-- [/] Pytest coverage and logging
-- [ ] GUI interface (PyQt)
-- [ ] Conversion to a live viewer in addition to exporting logs
+- [x] Pytest coverage and logging
+- [x] GUI interface (PyQt)
+- [x] Conversion to a live viewer in addition to exporting logs
 - [ ] Viewer for other database areas that users find relevant. (Unless Steve says otherwise, this tool will not allow modifying the database)
 
 ## 📄 Legal
