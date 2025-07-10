@@ -37,7 +37,6 @@ def test_get_events(sample_engine, mock_logger_db):
     
 def test_get_saves(sample_engine, mock_logger_db):
     df = db.get_saves(sample_engine)
-    #TODO Test that the list of games from the database matches the expected list
     assert df == [[115, 'Galactic Empire']]
     assert len(df) == 1
 
@@ -47,7 +46,6 @@ def test_get_saves(sample_engine, mock_logger_db):
 
 def test_get_races(sample_engine, mock_logger_db):
     df = db.get_races(sample_engine, 115)
-    #TODO Test that the list of games from the database matches the expected list
     assert df == [[588, 'Terran'], [589, 'Aaanthor'], [590, 'Eldar'], [591, 'Precusors'], [592, 'Invaders'], [593, 'Rhoeng'], [594, 'Alris Corvin'], [595, 'Odzani']]
     assert len(df) == 8
 

@@ -40,6 +40,6 @@ def main():
         values=db.get_races(engine, selection_game)
     ).run()
 
-    filtered_df = db.filter_events(df, selection_race)
+    filtered_df = db.filter_events(engine, df, selection_game, selection_race)
     export.export_data(filtered_df, filename=file, format=args.format)
     return 0
