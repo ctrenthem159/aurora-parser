@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
         
         #TODO validate excel, txt, and json. csv and html work fine.
         try:
-            export.export_data(self.events_output[['IncrementID', 'MessageText']], file_path, format=fmt)
+            export.export_data(self.events_output[['Timestamp', 'MessageText']], file_path, format=fmt)
             self.status.setText(f"Exported to {file_path}")
         except Exception as e:
             logging.exception("Export failed")
