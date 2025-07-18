@@ -1,5 +1,7 @@
 # Aurora Parser
 
+[![codecov](https://codecov.io/gh/ctrenthem159/aurora-parser/graph/badge.svg?token=9CEC8HSTD0)](https://codecov.io/gh/ctrenthem159/aurora-parser)
+
 A simple interactive tool to extract your empire's logs from the Aurora database and export them to a variety of formats to use downstream. The tool was originally built to pull game logs as a .csv file to hand off to ChatGPT for creating narratives, but it can be used for a wide variety of uses.
 
 ## 🚀 Features
