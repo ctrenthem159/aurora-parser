@@ -1,8 +1,14 @@
 # Aurora Parser
 
+![logo](src/assets/logo.ico)
+
+[![codecov](https://codecov.io/gh/ctrenthem159/aurora-parser/graph/badge.svg?token=9CEC8HSTD0)](https://codecov.io/gh/ctrenthem159/aurora-parser)
+
 A simple interactive tool to extract your empire's logs from the Aurora database and export them to a variety of formats to use downstream. The tool was originally built to pull game logs as a .csv file to hand off to ChatGPT for creating narratives, but it can be used for a wide variety of uses.
 
 ## 🚀 Features
+
+![main menu screenshot](src/assets/image.png)
 
 - Interactive menu to select your race (or any race you want to view)
 - See your gamelogs directly in the app, with readable timestamps
@@ -10,33 +16,19 @@ A simple interactive tool to extract your empire's logs from the Aurora database
 
 ## 🛠️ Installation
 
-For now, you have to clone the repo and install the requirements manually. A functional installer is coming later.
-
-```bash
-git clone https://github.com/ctrenthem159/aurora-parser
-cd aurora-parser
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
+You can download the latest release from [the Releases page on GitHub](https://github.com/ctrenthem159/aurora-parser/releases). Currently the app is available for Windows and Linux.
 
 ## 📦 Usage
 
-At present, using the app is no different from development. A functional GUI is ready, but not easy to access yet.
+When the app opens, you can select your `AuroraDB` file that contains your current save. Unless the database structure changes, this app should be compatible with most recent versions of Aurora.
 
-## 🧪 Testing
+Upon selecting a game database, use the dropdowns to choose your savegame and race, then hit "Load".
 
-This project uses pytest for testing, just run `pytest` to run tests.
+If you want to export your entire game log, use the "Export" button at the bottom. You can save it in a variety of formats including json, csv, and excel.
 
-To run with coverage:
+## 🧪 Development & Testing
 
-```bash
-pytest --cov=src tests/
-coverage report
-coverage html  # view HTML report in `htmlcov/index.html
-```
-
----
+Developers and writers looking to contribute should review the [contribution guidelines](CONTRIBUTING.md).
 
 ## 🔭 Roadmap
 
@@ -50,15 +42,13 @@ coverage html  # view HTML report in `htmlcov/index.html
 - [ ] Re-write the CLI to match the functionality of the GUI, and make it more suitable for testing/automation
 - [ ] Documentation
 - [ ] Return to 100% test coverage
-- [ ] Self-contained executable file (for distribution)
+- [x] Self-contained executable file (for distribution)
 
 ## 📄 Legal
 
-PolyForm Noncommercial
+[PolyForm Noncommercial license](LICENSE)
 
-AI Usage Disclosure is located at in the disclosure document
-
-not yet Steve-approved (but will be once it's ready!)
+[AI Usage Disclosure](DISCLOSURE.md)
 
 ## 🧠 Credits
 
