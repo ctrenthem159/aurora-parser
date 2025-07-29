@@ -2,7 +2,8 @@ import sys, os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QAbstractItemView,
     QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
-    QFileDialog, QLabel, QComboBox, QTableView
+    QFileDialog, QLabel, QComboBox, QTableView, QCheckBox,
+    QTabWidget
 )
 from PyQt6.QtCore import QAbstractTableModel, Qt
 from PyQt6.QtGui import QIcon
@@ -22,30 +23,38 @@ icon_path = os.path.join(basedir, 'assets', 'logo.png')
 
 # Initialize the dataframe for the event viewer module
 class QDataFrameModel(QAbstractTableModel):
-    def __init__(self,data, visible_columns=None):
+    def __init__(self,data, visible_columns=None, header_labels=None, bool_cols=None):
         super().__init__()
         self._data = data
         if visible_columns is None:
             self.visible_columns = list(data.columns)
         else:
             self.visible_columns = visible_columns
-    
+        self.bool_columns = set() if bool_cols is None else set(bool_cols)
+        self.header_labels = header_labels if header_labels is not None else {}
+
     def data(self, index, role):
         if role == Qt.ItemDataRole.DisplayRole:
             column = self.visible_columns[index.column()]
             value = self._data.iloc[index.row()][column]
+            if column in self.bool_columns:
+                if role == Qt.ItemDataRole.CheckStateRole:
+                    return Qt.Checked if value else Qt.Unchecked
+                if role == Qt.ItemDataRole.DisplayRole:
+                    return ""
             return str(value)
-    
+
     def rowCount(self, index):
         return self._data.shape[0]
-    
+
     def columnCount(self, index):
         return len(self.visible_columns)
-    
+
     def headerData(self, section, orientation, role):
         if role == Qt.ItemDataRole.DisplayRole:
             if orientation == Qt.Orientation.Horizontal:
-                return str(self.visible_columns[section])
+                column_key = self.visible_columns[section]
+                return self.header_labels.get(column_key, str(column_key))
             elif orientation == Qt.Orientation.Vertical:
                 return str(self._data.index[section])
 
@@ -53,7 +62,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Aurora Parser GUI")
-        #TODO add more flair to the UI
 
         # Central widget
         main_layout = QVBoxLayout()
@@ -81,6 +89,10 @@ class MainWindow(QMainWindow):
         # Game & Race selection
         filter_layout = QHBoxLayout()
 
+        self.filter_toggle = QCheckBox("Show NPRs?")
+        self.filter_toggle.setChecked(False)
+        self.filter_toggle.toggled.connect(self.list_races)
+
         self.savegame_combo = QComboBox()
         self.savegame_combo.setPlaceholderText('Select Save')
         self.savegame_combo.setEnabled(True)
@@ -94,17 +106,39 @@ class MainWindow(QMainWindow):
         self.load_button.setEnabled(False)
         self.load_button.clicked.connect(self.load_events)
 
+        filter_layout.addWidget(self.filter_toggle)
         filter_layout.addWidget(self.savegame_combo)
         filter_layout.addWidget(self.race_combo)
         filter_layout.addWidget(self.load_button)
 
         main_layout.addLayout(filter_layout)
 
-        # Evvents table display
+        # Tabbed main window
+        self.tabs = QTabWidget()
+
+        # Events table display
         self.events_table = QTableView()
         self.events_table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
 
-        main_layout.addWidget(self.events_table, stretch=1)
+        # Commanders table display
+        self.commanders_table = QTableView()
+        self.commanders_table.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
+
+        # Coming Soon banner
+        self.about_label = QLabel(
+            "More features coming soon!\n"
+            "Aurora Parser v0.9\n"
+            "© C. Trenthem, 2025\n"
+            "Licensed under PolyForm NonCommercial\n"
+            "No affiliation with Steve Walmsey or Pentarch\n"
+        )
+        self.about_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.tabs.addTab(self.events_table, "Events")
+        self.tabs.addTab(self.commanders_table, "Commanders")
+        self.tabs.addTab(self.about_label, "More")
+
+        main_layout.addWidget(self.tabs, stretch=1)
 
         # Export settings
         self.export_button = QPushButton('Export')
@@ -131,7 +165,7 @@ class MainWindow(QMainWindow):
             else:
                 self.status.setText('Database connected successfully')
                 self.list_saves()
-    
+
     def list_saves(self):
         game_query = db.get_saves(self.engine)
         self.savegame_combo.clear()
@@ -140,17 +174,19 @@ class MainWindow(QMainWindow):
         for GameID, GameName in game_query:
             self.savegame_combo.addItem(GameName)
             self.savegame_map[GameName] = GameID
-    
+
     def list_races(self):
         selected_game = self.savegame_combo.currentText()
         if not selected_game:
             return
-        
+
         self.gameID = self.savegame_map.get(selected_game)
         if not self.gameID:
             return
-        
-        result = db.get_races(self.engine, self.gameID)
+
+        self.filter = not self.filter_toggle.isChecked()
+
+        result = db.get_races(self.engine, self.gameID, self.filter)
         self.race_combo.clear()
         self.race_map = {}
 
@@ -160,30 +196,45 @@ class MainWindow(QMainWindow):
 
         self.race_combo.setEnabled(True)
         self.load_button.setEnabled(True)
-    
+
     def load_events(self):
         selected_race = self.race_combo.currentText()
         raceID = self.race_map.get(selected_race)
         if not raceID:
             self.status.setText('No race selected.')
             return
-        
+
         try:
-            events_input = db.get_events(self.engine) #returns a df
-            self.events_output = db.filter_events(self.engine, events_input, self.gameID, raceID)
-            self.populate_events_table(self.events_output)
-            self.status.setText(f'{len(self.events_output)} events loaded')
+            self.events = db.get_events(self.engine, self.gameID, raceID)
+            self.populate_events_table(self.events)
+            self.commanders = db.get_commanders(self.engine, self.gameID, raceID)
+            self.populate_commanders_table(self.commanders)
         except Exception as e:
             self.status.setText(f'Error loading events.')
             logging.exception(f'Failed to load events: {e}')
-    
+
     def populate_events_table(self, df):
-        self.model = QDataFrameModel(df, visible_columns=['Timestamp', 'EventType', 'MessageText'])
-        self.events_table.setModel(self.model)
+        header_labels = {
+            "Timestamp": "Time",
+            "EventType": "Event Type",
+            "MessageText": "Event"
+        }
+        self.events_model = QDataFrameModel(df, visible_columns=['Timestamp', 'EventType', 'MessageText'], header_labels = header_labels)
+        self.events_table.setModel(self.events_model)
         self.events_table.resizeColumnsToContents()
-        
+
         self.export_button.setEnabled(True)
-    
+
+    def populate_commanders_table(self, df):
+        header_labels = {
+            "CommanderType": "Type",
+            "RankName": "Rank",
+            "StoryCharacter": "Story?"
+        }
+        self.commanders_model = QDataFrameModel(df, visible_columns=['Name','CommanderType','RankName','Homeworld', 'StoryCharacter'], header_labels=header_labels, bool_cols=['StoryCharacter'])
+        self.commanders_table.setModel(self.commanders_model)
+        self.commanders_table.resizeColumnsToContents()
+
     def show_export_dialog(self):
         filters = "CSV Files (*.csv);;JSON Files (*.json);;Excel Files (*.xlsx);;Text Files (*.txt);;HTML Files (*.html)"
         file_path, selected_filter = QFileDialog.getSaveFileName(
@@ -195,7 +246,7 @@ class MainWindow(QMainWindow):
 
         if not file_path:
             return
-        
+
         # Determine format from selected filter
         if selected_filter.startswith("CSV"):
             fmt = "csv"
@@ -210,7 +261,7 @@ class MainWindow(QMainWindow):
         else:
             self.status.setText("Unsupported file type.")
             return
-        
+
         #TODO validate excel, txt, and json. csv and html work fine.
         try:
             export.export_data(self.events_output[['Timestamp', 'MessageText']], file_path, format=fmt)
