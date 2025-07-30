@@ -32,7 +32,13 @@ Developers and writers looking to contribute should review the [contribution gui
 
 ## 🔭 Roadmap
 
-- [ ] Viewer for other database areas that users find relevant. (Unless Steve says otherwise, this tool will not allow modifying the database)
+- [/] Viewer for other database areas that users find relevant. (Unless Steve says otherwise, this tool will not allow modifying the database)
+  - [x] Commanders
+  - [ ] Ships & Fleets
+  - [ ] Planets & Systems
+  - [ ] Minerals
+  - [ ] Theme Viewers
+- [ ] Enable live-view mode
 - [ ] Re-write the CLI to match the functionality of the GUI, and make it more suitable for testing/automation
 - [ ] Documentation
 - [ ] Return to 100% test coverage

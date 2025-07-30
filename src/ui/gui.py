@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QAbstractItemView,
     QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit,
     QFileDialog, QLabel, QComboBox, QTableView, QCheckBox,
-    QTabWidget
+    QTabWidget, QMessageBox
 )
 from PyQt6.QtCore import QAbstractTableModel, Qt
 from PyQt6.QtGui import QIcon
@@ -14,14 +14,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Set the window icon correctly
+# Set the app icon correctly
 if getattr(sys, 'frozen', False):
     basedir = sys._MEIPASS
 else:
     basedir = os.path.dirname(__file__)
 icon_path = os.path.join(basedir, 'assets', 'logo.png')
 
-# Initialize the dataframe for the event viewer module
+# Dataframe viewport for tables
 class QDataFrameModel(QAbstractTableModel):
     def __init__(self,data, visible_columns=None, header_labels=None, bool_cols=None):
         super().__init__()
@@ -113,8 +113,12 @@ class MainWindow(QMainWindow):
 
         main_layout.addLayout(filter_layout)
 
+        # !TODO Add new window functions such as a different interface for browsing static data including naming themes, ship classes, etc.
+        # Specifically removing the menu options for game and race selection since those aren't valid for static tables
+
         # Tabbed main window
         self.tabs = QTabWidget()
+        self.tabs.currentChanged.connect(self.handle_tab_change)
 
         # Events table display
         self.events_table = QTableView()
@@ -235,11 +239,18 @@ class MainWindow(QMainWindow):
         self.commanders_table.setModel(self.commanders_model)
         self.commanders_table.resizeColumnsToContents()
 
+    def handle_tab_change(self):
+        index = self.tabs.currentIndex()
+        if index in (0, 1):
+            self.export_button.setEnabled(True)
+        else:
+            self.export_button.setEnabled(False)
+
     def show_export_dialog(self):
         filters = "CSV Files (*.csv);;JSON Files (*.json);;Excel Files (*.xlsx);;Text Files (*.txt);;HTML Files (*.html)"
         file_path, selected_filter = QFileDialog.getSaveFileName(
             self,
-            "Export Events",
+            "Export Table",
             "",  # default path
             filters
         )
@@ -264,7 +275,15 @@ class MainWindow(QMainWindow):
 
         #TODO validate excel, txt, and json. csv and html work fine.
         try:
-            export.export_data(self.events_output[['Timestamp', 'MessageText']], file_path, format=fmt)
+            tab = self.tabs.currentIndex()
+            if tab == 0:
+                export.export_data(self.events[["Timestamp", "EventType", "MessageText"]], file_path, format=fmt)
+            elif tab == 1:
+                export.export_data(self.commanders[["Name", "CommanderType", "RankName", "Homeworld"]], file_path, format=fmt)
+            else:
+                QMessageBox.critical(self, "Error", "Invalid table.\nPlease go back and ensure a table is loaded.")
+                logging.error(f"Invalid table selected. Table index {tab}")
+                return None
             self.status.setText(f"Exported to {file_path}")
         except Exception as e:
             logging.exception("Export failed")

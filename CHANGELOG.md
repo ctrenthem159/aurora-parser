@@ -1,20 +1,16 @@
 # Changelog
 
-Nothing worth saying here. It's a changelog. Honestly, I'm surprised you're reading this.
-
----
-
 ## [Unreleased 0.9]
 
 ### Added
 
-- Commanders list now available (but the export button still only exports events)
+- Commanders list now available
 
 ### Changed
 
 - Event types now appear correctly.
-- Table names are more understandable in the UI. They keep their database names on output, for the sake of downstream tools
-- NPR filter added to UI. When checked, NPRs will not appear in the Race list.
+- Table names are more understandable in the UI.
+- NPR filter added to UI. Check the box to show NPRs in the race list, otherwise only player empires will appear.
 
 ## [0.6 - 0.8]
 
